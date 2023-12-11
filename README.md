@@ -3,7 +3,7 @@ Dataset, audio files, and scripts generated for the article "Out with the old, i
 ## The audio folder
 Contains all stimuli, in the form of isolated words.
 ## Datasets
-identdata.R and discrimdata.R have the responses obtained by task.
+identdata.csv and discrimdata.csv have the responses obtained by task; participants.csv has the participants' background info.
 ## R scripts
 ident_script.R and discrim_script.R have the coding done for calculating dprime, regressions, and plotting.
 ## Praat scripts
