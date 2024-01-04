@@ -1,4 +1,6 @@
-identdata <- read.csv("identdata.csv")
+data2<- read.csv("identdata.csv")
+#exclude bilinguals
+identdata <- subset(data2, subject!="jw5c" & subject!="fnoe")
 #Separate dataframes per contrast, so I can plot
 iIident<-subset(identdata, vowelcontrast=="i/I")
 calcIi<-data.frame(tapply(iIident$correct, list(iIident$subject, iIident$correct), length))
@@ -8,28 +10,28 @@ Iimean<-mean(propsIi)
 se<- function(x) sd(x)/sqrt(length(x))
 seIi<-se(propsIi)
 
-uyident<-subset(ns, vowelcontrast=="y/u")
+uyident<-subset(identdata, vowelcontrast=="y/u")
 calcuy<-data.frame(tapply(uyident$correct, list(uyident$subject, uyident$correct), length))
 calcuy[is.na(calcuy)]<- 0
 propsuy<-c(calcuy$X1/18)
 uymean<-mean(propsuy)
 seuy<-se(propsuy)
 
-uiident<-subset(ns, vowelcontrast=="i/u")
+uiident<-subset(identdata, vowelcontrast=="i/u")
 calcui<-data.frame(tapply(uiident$correct, list(uiident$subject, uiident$correct), length))
 calcui[is.na(calcui)]<- 0
 propsui<-c(calcui$X1/18)
 uimean<-mean(propsui)
 seui<-se(propsui)
 
-yiident<-subset(ns, vowelcontrast=="y/i")
+yiident<-subset(identdata, vowelcontrast=="y/i")
 calcyi<-data.frame(tapply(yiident$correct, list(yiident$subject, yiident$correct), length))
 calcyi[is.na(calcyi)]<- 0
 propsyi<-c(calcyi$X1/18)
 yimean<-mean(propsyi)
 seyi<-se(propsyi)
 
-contrast<-c("/i-\u026A/", "/u-i/", "/u-y/", "/y-i/")
+contrast<-c("/i-\u026A/", "/u-i/", "/u-y/", "/i-y/")
 allmeans<-c(Iimean, uimean, uymean, yimean)
 allses<-c(seIi, seui, seuy, seyi)
 margin2<-qt(0.975,df=29-1)*allses/sqrt(29)
@@ -62,5 +64,7 @@ b<-emmeans(thatreg, list(pairwise ~ vowelcontrast))
 
 #RTplot
 rtplot<-ggplot(identnoNA, aes(x=vowelcontrast, y=rt)) + geom_jitter(aes(x=vowelcontrast, y=rt), colour="grey", width=0.2) + geom_boxplot(outlier.shape = NA, alpha = 0.1) + theme_classic(base_size=15)
-ggpar(rtplot, xlab = "Contrast", ylab = "Reaction time (ms)")
+rtplot + labs(x = "Contrast", y = "Reaction time (ms)") + scale_x_discrete(labels=c('i/\u026A', 'u/i', 'i/y', 'u/y'))
 
+#items
+itemcorrect<-prop.table(table(identnoNA$pic_choices, identnoNA$correct), 1)
