@@ -1,6 +1,6 @@
-select all
-Remove
-dir$="C:\features\audios\"
+#select all
+#Remove
+dir$="C:\Users\#4757-NBAsusUX310U\OneDrive\Escritorio\Frontiers\audios\"
 table2= Create Table with column names: "table2", 0, "Word F1 F1_Bark F2 F2_Bark F3 F3_Bark Duration" 
 strings= Create Strings as file list: "files", dir$ + "*.wav"
 nfiles= Get number of strings
