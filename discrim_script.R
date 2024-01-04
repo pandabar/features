@@ -1,5 +1,6 @@
-discrimdata <- read.csv("discrimdata.csv")
-
+data <- read.csv("discrimdata.csv")
+#exclude bilinguals
+discrimdata<- subset(data, subject!="jw5c" & subject!="fnoe")
 #subset by contrast
 iI<-subset(discrimdata, tributesto=="i/I"| tributesto2=="i/I")
 uy<-subset(discrimdata, tributesto=="u/y"| tributesto2=="u/y")
@@ -93,8 +94,8 @@ for (i in 1:length(nsiddyi)) {
 #this creates a dataframe with dprimes
 ids<-unique(as.character(discrimdata$subject))
 df<-data.frame(id=ids, longshort=dprimensiI, frontback=dprimensui, rounded=dprimensuy, frontround=dprimensyi)
-colnames(df)<-c("id", "/i-\u026A/", "/u-i/", "/u-y/", "/y-i/")
-test<-data.frame(subj=rep(mydf$id, 4), contrast=stack(df, select= c(-id)))
+colnames(df)<-c("id", "/i-\u026A/", "/u-i/", "/u-y/", "/i-y/")
+test<-data.frame(subj=rep(df$id, 4), contrast=stack(df, select= c(-id)))
 colnames(test)<-c("subj", "dprime", "contrast")
 #Stats, dprime
 library(rstatix)
@@ -117,7 +118,7 @@ discnoNA$cont<-ifelse(discnoNA$vowelcontrast=="i_short/i_long", "i/\u026A",
                                     ifelse(discnoNA$vowelcontrast=="u/y", "u/y",
                                            ifelse(discnoNA$vowelcontrast=="y/y", "y/y",
                                                   ifelse(discnoNA$vowelcontrast=="u/u", "u/u",
-                                                         ifelse(discnoNA$vowelcontrast=="u/i_long", "u/i", "y/i")))))))
+                                                         ifelse(discnoNA$vowelcontrast=="u/i_long", "u/i", "i/y")))))))
 
 discnoNA$trialType<-ifelse(discnoNA$sameordiffstims==0, "same", "different")
 
@@ -142,11 +143,12 @@ discnoNA$sameordiffstims<-as.factor(discnoNA$sameordiffstims)
 discnoNA$correct<- ifelse(discnoNA$sameordiffstims == discnoNA$RESP, "correct", "incorrect")
 itemreg<-glmer(RESP ~ stimulus + (1|subject), family=binomial, data=discnoNA)
 
+
 #plots
 library(ggplot2)
 library(ggpubr)
 p<-ggboxplot(test, x="contrast", y="dprime", add="jitter", color="black")
 ggpar(p, xlab = "Contrast", ylab = "Sensitivity (d')")
 
-rtplotIDENT<-ggplot(discnoNA, aes(x=cont, y=rt, color=trialType)) + geom_jitter(aes(x=cont, y=rt), colour="grey", width=0.2) + geom_boxplot(outlier.shape = NA, alpha = 0.1) + theme_classic(base_size=12)
-ggpar(rtplotIDENT, xlab = "Stimuli pair", ylab = "Reaction time (ms)")
+rtplotdisc<-ggplot(discnoNA, aes(x=cont, y=rt, color=trialType)) + geom_jitter(aes(x=cont, y=rt), colour="grey", width=0.2) + geom_boxplot(outlier.shape = NA, alpha = 0.1) + theme_classic(base_size=12)
+ggpar(rtplotdisc, xlab = "Stimuli pair", ylab = "Reaction time (ms)")
